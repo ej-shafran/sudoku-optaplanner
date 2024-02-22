@@ -6,12 +6,21 @@ plugins {
 group = "org.acme"
 version = "1.0-SNAPSHOT"
 
+val optaplannerVersion = "9.44.0.Final"
+val logbackVersion = "1.4.12"
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
+    implementation(platform("org.optaplanner:optaplanner-bom:${optaplannerVersion}"))
+    implementation("org.optaplanner:optaplanner-core")
+    testImplementation("org.optaplanner:optaplanner-test")
+
+    runtimeOnly("ch.qos.logback:logback-classic:${logbackVersion}")
+
 }
 
 tasks.test {
