@@ -2,6 +2,10 @@ import org.acme.sudoku.domain.Board
 import org.acme.sudoku.domain.Cell
 import org.acme.sudoku.solver.BoardConstraintProvider
 import org.optaplanner.core.api.solver.SolverFactory
+import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicPhaseConfig
+import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicType
+import org.optaplanner.core.config.localsearch.LocalSearchPhaseConfig
+import org.optaplanner.core.config.localsearch.LocalSearchType
 import org.optaplanner.core.config.solver.SolverConfig
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -40,7 +44,10 @@ fun main() {
     val solverFactory = SolverFactory.create<Board>(
         SolverConfig().withSolutionClass(Board::class.java).withEntityClasses(Cell::class.java)
             .withConstraintProviderClass(BoardConstraintProvider::class.java)
-            .withTerminationSpentLimit(Duration.ofSeconds(30))
+            .withTerminationSpentLimit(Duration.ofSeconds(30)).withPhases(
+                ConstructionHeuristicPhaseConfig().withConstructionHeuristicType(ConstructionHeuristicType.FIRST_FIT),
+                LocalSearchPhaseConfig().withLocalSearchType(LocalSearchType.LATE_ACCEPTANCE)
+            )
     )
 
     val problem = generateDemoData()
