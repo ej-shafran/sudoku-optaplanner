@@ -47,10 +47,6 @@ fun main() {
 }
 
 fun printBoard(board: Board) {
-    val cellList = IntStream.rangeClosed(1, 81).mapToObj() { id ->
-        board.prefilledCellList.find { cell -> cell.id == id }
-            ?: board.fillableCellList.find { cell -> cell.id == id }!!
-    }.toList()
 
     val middleRow = "╠═══════════════╬═══════════════╬═══════════════╣"
 
@@ -61,7 +57,7 @@ fun printBoard(board: Board) {
         var row = ""
         for (j in 0 until 9) {
             if ((j + 1) % 3 == 1) row += "║"
-            val value = cellList[(i * 9) + j]?.value?.toString() ?: " "
+            val value = board.cellList[(i * 9) + j].toPrintRepresentation()
             row += "│ $value │"
         }
         row += "║"

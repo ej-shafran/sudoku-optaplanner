@@ -23,6 +23,11 @@ class Board(
         IntStream.rangeClosed(1, 81).filter { id -> !prefilledCellList.any { cell -> cell.id == id } }
             .mapToObj { FillableCell(it) }.toList()
 
+    val cellList: MutableList<Cell>
+        get() = IntStream.rangeClosed(1, 81).mapToObj() { id ->
+            prefilledCellList.find { cell -> cell.id == id } ?: fillableCellList.find { cell -> cell.id == id }!!
+        }.toList()
+
     @Suppress("unused") // Needed for OptaPlanner
     @PlanningScore
     lateinit var score: SimpleScore
