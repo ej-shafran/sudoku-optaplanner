@@ -41,7 +41,7 @@ fun main() {
         SolverConfig().withSolutionClass(Board::class.java).withEntityClasses(FillableCell::class.java)
             .withConstraintProviderClass(BoardConstraintProvider::class.java)
             .withTerminationSpentLimit(Duration.ofSeconds(30)).withPhases(
-                ConstructionHeuristicPhaseConfig().withConstructionHeuristicType(ConstructionHeuristicType.FIRST_FIT_DECREASING),
+                ConstructionHeuristicPhaseConfig().withConstructionHeuristicType(ConstructionHeuristicType.WEAKEST_FIT),
                 LocalSearchPhaseConfig().withLocalSearchType(LocalSearchType.LATE_ACCEPTANCE)
 
             )
