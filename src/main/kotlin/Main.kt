@@ -1,22 +1,25 @@
 import org.acme.sudoku.domain.Board
-import org.acme.sudoku.domain.FillableCell
-import org.acme.sudoku.domain.PrefilledCell
+import org.acme.sudoku.domain.Cell
 import org.acme.sudoku.solver.BoardConstraintProvider
 import org.optaplanner.core.api.solver.SolverFactory
 import org.optaplanner.core.config.solver.SolverConfig
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.util.stream.IntStream
 import kotlin.streams.asSequence
 
 val LOGGER: Logger = LoggerFactory.getLogger("Sudoku App")
 
 fun generateFromString(problem: String): Board {
-    val prefilledCellList =
-        problem.chars().asSequence().mapIndexed { i, c -> Pair(i + 1, c.toChar()) }.filter { it.second != '.' }
-            .map { PrefilledCell(it.first, it.second.digitToInt()) }.toList()
-    return Board(prefilledCellList)
+    val cellList = problem.chars().asSequence().mapIndexed { i, c ->
+        val char = c.toChar()
+        if (char == '.') {
+            return@mapIndexed Cell(i, null, false)
+        } else {
+            return@mapIndexed Cell(i, char.digitToInt(), true)
+        }
+    }.toList()
+    return Board(cellList)
 }
 
 fun generateDemoData(): Board {
@@ -35,7 +38,7 @@ fun generateDemoData(): Board {
 
 fun main() {
     val solverFactory = SolverFactory.create<Board>(
-        SolverConfig().withSolutionClass(Board::class.java).withEntityClasses(FillableCell::class.java)
+        SolverConfig().withSolutionClass(Board::class.java).withEntityClasses(Cell::class.java)
             .withConstraintProviderClass(BoardConstraintProvider::class.java)
             .withTerminationSpentLimit(Duration.ofSeconds(30))
     )
@@ -47,10 +50,7 @@ fun main() {
 }
 
 fun printBoard(board: Board) {
-    val cellList = IntStream.rangeClosed(1, 81).mapToObj() { id ->
-        board.prefilledCellList.find { cell -> cell.id == id }
-            ?: board.fillableCellList.find { cell -> cell.id == id }!!
-    }.toList()
+    val cellList = board.cellList
 
     val middleRow = "╠═══════════════╬═══════════════╬═══════════════╣"
 
@@ -61,7 +61,7 @@ fun printBoard(board: Board) {
         var row = ""
         for (j in 0 until 9) {
             if ((j + 1) % 3 == 1) row += "║"
-            val value = cellList[(i * 9) + j]?.value?.toString() ?: " "
+            val value = cellList[(i * 9) + j].toPrintRepresentation()
             row += "│ $value │"
         }
         row += "║"
