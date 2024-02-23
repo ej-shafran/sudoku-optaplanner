@@ -3,11 +3,14 @@ import org.acme.sudoku.domain.FillableCell
 import org.acme.sudoku.domain.PrefilledCell
 import org.acme.sudoku.solver.BoardConstraintProvider
 import org.optaplanner.core.api.solver.SolverFactory
+import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicPhaseConfig
+import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicType
+import org.optaplanner.core.config.localsearch.LocalSearchPhaseConfig
+import org.optaplanner.core.config.localsearch.LocalSearchType
 import org.optaplanner.core.config.solver.SolverConfig
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.util.stream.IntStream
 import kotlin.streams.asSequence
 
 val LOGGER: Logger = LoggerFactory.getLogger("Sudoku App")
@@ -37,7 +40,11 @@ fun main() {
     val solverFactory = SolverFactory.create<Board>(
         SolverConfig().withSolutionClass(Board::class.java).withEntityClasses(FillableCell::class.java)
             .withConstraintProviderClass(BoardConstraintProvider::class.java)
-            .withTerminationSpentLimit(Duration.ofSeconds(30))
+            .withTerminationSpentLimit(Duration.ofSeconds(30)).withPhases(
+                ConstructionHeuristicPhaseConfig().withConstructionHeuristicType(ConstructionHeuristicType.FIRST_FIT_DECREASING),
+                LocalSearchPhaseConfig().withLocalSearchType(LocalSearchType.LATE_ACCEPTANCE)
+
+            )
     )
 
     val problem = generateDemoData()

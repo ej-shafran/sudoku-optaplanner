@@ -1,5 +1,6 @@
 package org.acme.sudoku.domain
 
+import org.acme.sudoku.solver.FillableCellDifficultyWeightFactory
 import org.optaplanner.core.api.domain.entity.PlanningEntity
 import org.optaplanner.core.api.domain.variable.PlanningVariable
 import kotlin.math.ceil
@@ -22,7 +23,7 @@ class PrefilledCell(id: Int, value: Int) : Cell(id, value) {
     }
 }
 
-@PlanningEntity
+@PlanningEntity(difficultyWeightFactoryClass = FillableCellDifficultyWeightFactory::class)
 class FillableCell(id: Int) : Cell(id, null) {
     @PlanningVariable
     override var value: Int? = null
