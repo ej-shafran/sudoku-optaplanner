@@ -1,5 +1,6 @@
 package org.acme.sudoku.domain
 
+import org.acme.sudoku.solver.ValueStrengthWeightFactory
 import org.optaplanner.core.api.domain.entity.PlanningEntity
 import org.optaplanner.core.api.domain.entity.PlanningPin
 import org.optaplanner.core.api.domain.lookup.PlanningId
@@ -8,7 +9,9 @@ import kotlin.math.ceil
 
 @PlanningEntity
 class Cell(
-    @PlanningId val id: Int, @PlanningVariable var value: Int?, @PlanningPin val pinned: Boolean
+    @PlanningId val id: Int,
+    @PlanningVariable(strengthWeightFactoryClass = ValueStrengthWeightFactory::class) var value: Int?,
+    @PlanningPin val pinned: Boolean
 ) {
     fun getRow(): Int = ceil((id.toDouble() / 9)).toInt()
     fun getCol(): Int = ((id - 1) % 9) + 1

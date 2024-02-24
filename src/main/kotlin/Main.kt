@@ -46,6 +46,7 @@ fun main() {
             .withConstraintProviderClass(BoardConstraintProvider::class.java)
             .withTerminationSpentLimit(Duration.ofSeconds(30)).withPhases(
                 ConstructionHeuristicPhaseConfig().withConstructionHeuristicType(ConstructionHeuristicType.FIRST_FIT),
+                ConstructionHeuristicPhaseConfig().withConstructionHeuristicType(ConstructionHeuristicType.WEAKEST_FIT),
                 LocalSearchPhaseConfig().withLocalSearchType(LocalSearchType.LATE_ACCEPTANCE)
             )
     )
