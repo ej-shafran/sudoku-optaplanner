@@ -11,17 +11,12 @@ import kotlin.streams.toList
 
 @PlanningSolution
 class Board(
-    @ValueRangeProvider @ProblemFactCollectionProperty val prefilledCellList: List<PrefilledCell>,
+    @PlanningEntityCollectionProperty val cellList: List<Cell>
 ) {
     @Suppress("unused") // Needed for OptaPlanner
     @ValueRangeProvider
     @ProblemFactCollectionProperty
-    val intList: List<Int> = IntStream.rangeClosed(1, 81).map { (it % 9) + 1 }.toList()
-
-    @PlanningEntityCollectionProperty
-    val fillableCellList: List<FillableCell> =
-        IntStream.rangeClosed(1, 81).filter { id -> !prefilledCellList.any { cell -> cell.id == id } }
-            .mapToObj { FillableCell(it) }.toList()
+    val intList: List<Int> = (1..9).shuffled()
 
     val cellList: MutableList<Cell>
         get() = IntStream.rangeClosed(1, 81).mapToObj() { id ->
