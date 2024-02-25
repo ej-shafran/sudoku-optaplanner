@@ -18,19 +18,19 @@ class BoardConstraintProvider : ConstraintProvider {
 
     private fun boxConflict(constraintFactory: ConstraintFactory): Constraint {
         return constraintFactory.forEachUniquePair(
-            Cell::class.java, Joiners.equal(Cell::getBox), Joiners.equal(Cell::value)
+            Cell::class.java, Joiners.equal(Cell::box), Joiners.equal(Cell::value)
         ).penalize(SimpleScore.ONE).asConstraint("Box")
     }
 
     private fun rowConflict(constraintFactory: ConstraintFactory): Constraint {
         return constraintFactory.forEachUniquePair(
-            Cell::class.java, Joiners.equal(Cell::getRow), Joiners.equal(Cell::value)
+            Cell::class.java, Joiners.equal(Cell::row), Joiners.equal(Cell::value)
         ).penalize(SimpleScore.ONE).asConstraint("Row")
     }
 
     private fun colConflict(constraintFactory: ConstraintFactory): Constraint {
         return constraintFactory.forEachUniquePair(
-            Cell::class.java, Joiners.equal(Cell::getCol), Joiners.equal(Cell::value)
+            Cell::class.java, Joiners.equal(Cell::col), Joiners.equal(Cell::value)
         ).penalize(SimpleScore.ONE).asConstraint("Col")
     }
 }

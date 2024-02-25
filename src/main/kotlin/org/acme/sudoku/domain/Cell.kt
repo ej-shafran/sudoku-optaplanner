@@ -11,14 +11,14 @@ import kotlin.math.ceil
 class Cell(
     @PlanningId val id: Int,
     @PlanningVariable(strengthWeightFactoryClass = ValueStrengthWeightFactory::class) var value: Int?,
-    @PlanningPin val pinned: Boolean
+    @PlanningPin val pinned: Boolean,
+    val row: Int,
+    val col: Int
 ) {
-    fun getRow(): Int = ceil((id.toDouble() / 9)).toInt()
-    fun getCol(): Int = ((id - 1) % 9) + 1
-    fun getBox(): Int = (getRow() - 1) / 3 * 3 + (getCol() - 1) / 3 + 1
+    val box = (row - 1) / 3 * 3 + (col - 1) / 3 + 1
 
     @Suppress("unused") // Needed for OptaPlanner
-    constructor() : this(0, null, false)
+    constructor() : this(0, null, false, 0, 0)
 
     fun toPrintRepresentation(): String {
         val baseRepresentation = value?.toString() ?: " "

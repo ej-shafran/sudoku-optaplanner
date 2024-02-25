@@ -5,25 +5,27 @@ import org.optaplanner.core.api.solver.SolverFactory
 import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicPhaseConfig
 import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicType
 import org.optaplanner.core.config.localsearch.LocalSearchPhaseConfig
-import org.optaplanner.core.config.localsearch.LocalSearchType
+import org.optaplanner.core.config.localsearch.decider.forager.LocalSearchForagerConfig
 import org.optaplanner.core.config.solver.SolverConfig
+import org.optaplanner.core.config.solver.termination.TerminationConfig
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import kotlin.streams.asSequence
 
 val LOGGER: Logger = LoggerFactory.getLogger("Sudoku App")
 
 fun generateFromString(problem: String): Board {
-    val cellList = problem.chars().asSequence().mapIndexed { i, c ->
-        val char = c.toChar()
-        if (char == '.') {
-            return@mapIndexed Cell(i, null, false)
-        } else {
-            return@mapIndexed Cell(i, char.digitToInt(), true)
+    return Board((0..8).flatMap { i ->
+        (0..8).map { j ->
+            val id = (i * 9) + j
+            val char = problem[id]
+            return@map if (char == '.') {
+                Cell(id, null, false, i + 1, j + 1)
+            } else {
+                Cell(id, char.digitToInt(), true, i + 1, j + 1)
+            }
         }
-    }.toList()
-    return Board(cellList)
+    })
 }
 
 fun generateDemoData(): Board {
@@ -43,11 +45,11 @@ fun generateDemoData(): Board {
 fun main() {
     val solverFactory = SolverFactory.create<Board>(
         SolverConfig().withSolutionClass(Board::class.java).withEntityClasses(Cell::class.java)
-            .withConstraintProviderClass(BoardConstraintProvider::class.java)
-            .withTerminationSpentLimit(Duration.ofSeconds(30)).withPhases(
-                ConstructionHeuristicPhaseConfig().withConstructionHeuristicType(ConstructionHeuristicType.FIRST_FIT),
+            .withConstraintProviderClass(BoardConstraintProvider::class.java).withTerminationConfig(
+                TerminationConfig().withSpentLimit(Duration.ofSeconds(30)).withBestScoreLimit("0")
+            ).withPhases(
                 ConstructionHeuristicPhaseConfig().withConstructionHeuristicType(ConstructionHeuristicType.WEAKEST_FIT),
-                LocalSearchPhaseConfig().withLocalSearchType(LocalSearchType.LATE_ACCEPTANCE)
+                LocalSearchPhaseConfig().withForagerConfig(LocalSearchForagerConfig().withAcceptedCountLimit(300))
             )
     )
 
@@ -59,8 +61,6 @@ fun main() {
 
 fun printBoard(board: Board) {
     val cellList = board.cellList
-
-    val middleRow = "╠═══════════════╬═══════════════╬═══════════════╣"
 
     LOGGER.info("╔═══════════════╦═══════════════╦═══════════════╗")
     for (i in 0 until 9) {
@@ -77,7 +77,7 @@ fun printBoard(board: Board) {
 
         LOGGER.info("║└───┘└───┘└───┘║└───┘└───┘└───┘║└───┘└───┘└───┘║")
 
-        if (i == 2 || i == 5) LOGGER.info(middleRow)
+        if (i == 2 || i == 5) LOGGER.info("╠═══════════════╬═══════════════╬═══════════════╣")
     }
     LOGGER.info("╚═══════════════╩═══════════════╩═══════════════╝")
 }

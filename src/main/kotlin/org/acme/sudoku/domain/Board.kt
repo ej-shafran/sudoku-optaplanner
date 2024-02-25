@@ -16,15 +16,7 @@ class Board(
     @Suppress("unused") // Needed for OptaPlanner
     @ValueRangeProvider
     @ProblemFactCollectionProperty
-    val intList: List<Int>
-
-    init {
-        val tempList: MutableList<Int> = IntStream.rangeClosed(1, 81).map { (it % 9) + 1 }.toList().toMutableList()
-        cellList.filter { it.value != null }.forEach {
-            tempList.remove(it.id)
-        }
-        intList = tempList.toList()
-    }
+    val intList: List<Int> = (1..9).shuffled()
 
     @Suppress("unused") // Needed for OptaPlanner
     @PlanningScore
